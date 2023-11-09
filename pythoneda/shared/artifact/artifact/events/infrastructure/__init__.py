@@ -1,7 +1,7 @@
 """
-pythoneda/shared/artifact/events/artifact/infrastructure/__init__.py
+pythoneda/shared/artifact/artifact/events/infrastructure/__init__.py
 
-This file ensures pythoneda.shared.artifact.events.artifact.infrastructure is a package.
+This file ensures pythoneda.shared.artifact.artifact.events.infrastructure is a package.
 
 Copyright (C) 2023-today rydnr's pythoneda-shared-artifact/artifact-events-infrastructure
 

@@ -1,7 +1,7 @@
 """
-pythoneda/shared/artifact/events/artifact/infrastructure/dbus/__init__.py
+pythoneda/shared/artifact/artifact/events/infrastructure/dbus/__init__.py
 
-This file ensures pythoneda.shared.artifact.events.artifact.infrastructure.dbus is a package.
+This file ensures pythoneda.shared.artifact.artifact.events.infrastructure.dbus is a package.
 
 Copyright (C) 2023-today rydnr's pythoneda-shared-artifact/artifact-events-infrastructure
 
@@ -20,7 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 
-DBUS_PATH = "/pythoneda/shared/artifact"
+DBUS_PATH = "/pythoneda/shared/artifact/artifact"
 
 from .dbus_artifact_changes_committed import DbusArtifactChangesCommitted
 from .dbus_artifact_commit_pushed import DbusArtifactCommitPushed

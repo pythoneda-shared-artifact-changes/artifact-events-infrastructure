@@ -1,9 +1,9 @@
 """
-pythoneda/shared/artifact_changes/events/infrastructure/dbus/dbus_artifact_commit_pushed.py
+pythoneda/shared/artifact/artifact/events/infrastructure/dbus/dbus_artifact_changes_committed.py
 
-This file defines the DbusArtifactCommitPushed class.
+This file defines the DbusArtifactChangesCommitted class.
 
-Copyright (C) 2023-today rydnr's pythoneda-shared-artifact-changes/event-infrastructure
+Copyright (C) 2023-today rydnr's pythoneda-shared-artifact/artifact-event-infrastructure
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -22,19 +22,20 @@ from dbus_next import Message
 from dbus_next.service import ServiceInterface, signal
 import json
 from pythoneda import BaseObject
-from pythoneda.shared.artifact_changes.events import ArtifactCommitPushed
-from pythoneda.shared.artifact_changes.events.infrastructure.dbus import DBUS_PATH
+from pythoneda.shared.artifact.events import Change
+from pythoneda.shared.artifact.artifact.events import ArtifactChangesCommitted
+from pythoneda.shared.artifact.artifact.events.infrastructure.dbus import DBUS_PATH
 from typing import List
 
 
-class DbusArtifactCommitPushed(BaseObject, ServiceInterface):
+class DbusArtifactChangesCommitted(BaseObject, ServiceInterface):
     """
-    D-Bus interface for ArtifactCommitPushed
+    D-Bus interface for ArtifactChangesCommitted
 
-    Class name: DbusArtifactCommitPushed
+    Class name: DbusArtifactChangesCommitted
 
     Responsibilities:
-        - Define the d-bus interface for the ArtifactCommitPushed event.
+        - Define the d-bus interface for the ArtifactChangesCommitted event.
 
     Collaborators:
         - None
@@ -42,16 +43,16 @@ class DbusArtifactCommitPushed(BaseObject, ServiceInterface):
 
     def __init__(self):
         """
-        Creates a new DbusArtifactCommitPushed.
+        Creates a new DbusArtifactChangesCommitted.
         """
         super().__init__(
-            "Pythoneda_Shared_artifact_changes_Events_ArtifactCommitPushed"
+            "Pythoneda_Shared_Artifact_Artifact_Events_ArtifactChangesCommitted"
         )
 
     @signal()
-    def ArtifactCommitPushed(self, change: "s", commit: "s"):
+    def ArtifactChangesCommitted(self, change: "s", commit: "s"):
         """
-        Defines the ArtifactCommitPushed d-bus signal.
+        Defines the ArtifactChangesCommitted d-bus signal.
         :param change: The change.
         :type change: str
         :param commit: The commit.
@@ -69,11 +70,11 @@ class DbusArtifactCommitPushed(BaseObject, ServiceInterface):
         return DBUS_PATH
 
     @classmethod
-    def transform(self, event: ArtifactCommitPushed) -> List[str]:
+    def transform(self, event: ArtifactChangesCommitted) -> List[str]:
         """
         Transforms given event to signal parameters.
         :param event: The event to transform.
-        :type event: pythoneda.shared.artifact_changes.events.ArtifactCommitPushed
+        :type event: pythoneda.shared.artifact.artifact.events.ArtifactChangesCommitted
         :return: The event information.
         :rtype: List[str]
         """
@@ -85,28 +86,27 @@ class DbusArtifactCommitPushed(BaseObject, ServiceInterface):
         ]
 
     @classmethod
-    def sign(cls, event: ArtifactCommitPushed) -> str:
+    def sign(cls, event: ArtifactChangesCommitted) -> str:
         """
         Retrieves the signature for the parameters of given event.
         :param event: The domain event.
-        :type event: pythoneda.shared.artifact_changes.events.ArtifactCommitPushed
+        :type event: pythoneda.shared.artifact.artifact.events.ArtifactChangesCommitted
         :return: The signature.
         :rtype: str
         """
-        print(f"received event: {event}")
         return "ssss"
 
     @classmethod
-    def parse(cls, message: Message) -> ArtifactCommitPushed:
+    def parse(cls, message: Message) -> ArtifactChangesCommitted:
         """
-        Parses given d-bus message containing a ArtifactCommitPushed event.
+        Parses given d-bus message containing a ArtifactChangesCommitted event.
         :param message: The message.
         :type message: dbus_next.Message
-        :return: The ArtifactCommitPushed event.
-        :rtype: pythoneda.shared.artifact_changes.events.ArtifactCommitPushed
+        :return: The ArtifactChangesCommitted event.
+        :rtype: pythoneda.shared.artifact.artifact.events.ArtifactChangesCommitted
         """
         change_json, commit, event_id, prev_event_ids = message.body
-        return ArtifactCommitPushed(
+        return ArtifactChangesCommitted(
             Change.from_json(change_json),
             commit,
             None,

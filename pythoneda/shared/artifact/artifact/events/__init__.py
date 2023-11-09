@@ -1,7 +1,7 @@
 """
-pythoneda/shared/artifact/events/__init__.py
+pythoneda/shared/artifact/artifact/events/__init__.py
 
-This file ensures pythoneda.shared.artifact.events is a namespace.
+This file ensures pythoneda.shared.artifact.artifact.events is a namespace.
 
 Copyright (C) 2023-today rydnr's pythoneda-shared-artifact/artifact-events-infrastructure
 

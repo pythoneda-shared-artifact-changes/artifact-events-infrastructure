@@ -1,9 +1,9 @@
 """
-pythoneda/shared/artifact_changes/events/infrastructure/dbus/dbus_artifact_tag_pushed.py
+pythoneda/shared/artifact/artifact/events/infrastructure/dbus/dbus_artifact_commit_pushed.py
 
-This file defines the DbusArtifactTagPushed class.
+This file defines the DbusArtifactCommitPushed class.
 
-Copyright (C) 2023-today rydnr's pythoneda-shared-artifact-changes/event-infrastructure
+Copyright (C) 2023-today rydnr's pythoneda-shared-artifact/artifact-event-infrastructure
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -22,19 +22,20 @@ from dbus_next import Message
 from dbus_next.service import ServiceInterface, signal
 import json
 from pythoneda import BaseObject
-from pythoneda.shared.artifact_changes.events import ArtifactTagPushed
-from pythoneda.shared.artifact_changes.events.infrastructure.dbus import DBUS_PATH
+from pythoneda.shared.artifact.artifact.events import ArtifactCommitPushed
+from pythoneda.shared.artifact.artifact.events.infrastructure.dbus import DBUS_PATH
+from pythoneda.shared.artifact.events import Change
 from typing import List
 
 
-class DbusArtifactTagPushed(BaseObject, ServiceInterface):
+class DbusArtifactCommitPushed(BaseObject, ServiceInterface):
     """
-    D-Bus interface for TagPushed
+    D-Bus interface for ArtifactCommitPushed
 
-    Class name: DbusArtifactTagPushed
+    Class name: DbusArtifactCommitPushed
 
     Responsibilities:
-        - Define the d-bus interface for the ArtifactTagPushed event.
+        - Define the d-bus interface for the ArtifactCommitPushed event.
 
     Collaborators:
         - None
@@ -42,22 +43,20 @@ class DbusArtifactTagPushed(BaseObject, ServiceInterface):
 
     def __init__(self):
         """
-        Creates a new DbusArtifactTagPushed.
+        Creates a new DbusArtifactCommitPushed.
         """
-        super().__init__("Pythoneda_Shared_artifact_changes_Events_TagPushed")
+        super().__init__(
+            "Pythoneda_Shared_Artifact_Artifact_Events_ArtifactCommitPushed"
+        )
 
     @signal()
-    def TagPushed(self, tag: "s", commit: "s", repositoryUrl: "s", branch: "s"):
+    def ArtifactCommitPushed(self, change: "s", commit: "s"):
         """
-        Defines the ArtifactTagPushed d-bus signal.
-        :param tag: The tag.
-        :type tag: str
+        Defines the ArtifactCommitPushed d-bus signal.
+        :param change: The change.
+        :type change: str
         :param commit: The commit.
         :type commit: str
-        :param repositoryUrl: The repository url.
-        :type repositoryUrl: str
-        :param branch: The branch.
-        :type branch: str
         """
         pass
 
@@ -71,49 +70,46 @@ class DbusArtifactTagPushed(BaseObject, ServiceInterface):
         return DBUS_PATH
 
     @classmethod
-    def transform(self, event: TagPushed) -> List[str]:
+    def transform(self, event: ArtifactCommitPushed) -> List[str]:
         """
         Transforms given event to signal parameters.
         :param event: The event to transform.
-        :type event: pythoneda.shared.artifact_changes.events.ArtifactTagPushed
+        :type event: pythoneda.shared.artifact.artifact.events.ArtifactCommitPushed
         :return: The event information.
         :rtype: List[str]
         """
         return [
-            event.tag,
+            event.change.to_json(),
             event.commit,
-            event.repository_url,
-            event.branch,
             event.id,
             json.dumps(event.previous_event_ids),
         ]
 
     @classmethod
-    def sign(cls, event: ArtifactTagPushed) -> str:
+    def sign(cls, event: ArtifactCommitPushed) -> str:
         """
         Retrieves the signature for the parameters of given event.
         :param event: The domain event.
-        :type event: pythoneda.shared.artifact_changes.events.TagPushed
+        :type event: pythoneda.shared.artifact.artifact.events.ArtifactCommitPushed
         :return: The signature.
         :rtype: str
         """
-        return "ssssss"
+        print(f"received event: {event}")
+        return "ssss"
 
     @classmethod
-    def parse(cls, message: Message) -> ArtifactTagPushed:
+    def parse(cls, message: Message) -> ArtifactCommitPushed:
         """
-        Parses given d-bus message containing a ArtifactTagPushed event.
+        Parses given d-bus message containing a ArtifactCommitPushed event.
         :param message: The message.
         :type message: dbus_next.Message
-        :return: The TagPushed event.
-        :rtype: pythoneda.shared.artifact_changes.events.ArtifactTagPushed
+        :return: The ArtifactCommitPushed event.
+        :rtype: pythoneda.shared.artifact.artifact.events.ArtifactCommitPushed
         """
-        tag, commit, repository_url, branch, event_id, prev_event_ids = message.body
-        return ArtifactTagPushed(
-            tag,
+        change_json, commit, event_id, prev_event_ids = message.body
+        return ArtifactCommitPushed(
+            Change.from_json(change_json),
             commit,
-            repository_url,
-            branch,
             None,
             event_id,
             json.loads(prev_event_ids),
