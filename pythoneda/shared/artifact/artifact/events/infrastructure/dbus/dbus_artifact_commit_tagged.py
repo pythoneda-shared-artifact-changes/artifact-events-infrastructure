@@ -67,7 +67,7 @@ class DbusArtifactCommitTagged(BaseObject, ServiceInterface):
         return DBUS_PATH
 
     @classmethod
-    def transform(self, event: ArtifactCommitTagged) -> List[str]:
+    def transform(cls, event: ArtifactCommitTagged) -> List[str]:
         """
         Transforms given event to signal parameters.
         :param event: The event to transform.
