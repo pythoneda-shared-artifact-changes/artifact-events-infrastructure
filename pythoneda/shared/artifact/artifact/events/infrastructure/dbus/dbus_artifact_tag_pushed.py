@@ -1,3 +1,4 @@
+# vim: set fileencoding=utf-8
 """
 pythoneda/shared/artifact/artifact/events/infrastructure/dbus/dbus_artifact_tag_pushed.py
 
