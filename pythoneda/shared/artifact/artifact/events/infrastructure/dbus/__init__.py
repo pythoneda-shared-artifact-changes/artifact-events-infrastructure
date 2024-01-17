@@ -27,3 +27,11 @@ from .dbus_artifact_changes_committed import DbusArtifactChangesCommitted
 from .dbus_artifact_commit_pushed import DbusArtifactCommitPushed
 from .dbus_artifact_commit_tagged import DbusArtifactCommitTagged
 from .dbus_artifact_tag_pushed import DbusArtifactTagPushed
+# vim: syntax=python ts=4 sw=4 sts=4 tw=79 sr et
+# Local Variables:
+# mode: python
+# python-indent-offset: 4
+# tab-width: 4
+# indent-tabs-mode: nil
+# fill-column: 79
+# End:
