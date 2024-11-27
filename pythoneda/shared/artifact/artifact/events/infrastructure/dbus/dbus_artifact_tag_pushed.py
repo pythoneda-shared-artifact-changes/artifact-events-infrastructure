@@ -22,7 +22,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from dbus_next import Message
 from dbus_next.service import ServiceInterface, signal
 import json
-from pythoneda import BaseObject
+from pythoneda.shared import BaseObject
 from pythoneda.shared.artifact.artifact.events import ArtifactTagPushed
 from pythoneda.shared.artifact.artifact.events.infrastructure.dbus import DBUS_PATH
 from typing import List
@@ -119,6 +119,8 @@ class DbusArtifactTagPushed(BaseObject, ServiceInterface):
             event_id,
             json.loads(prev_event_ids),
         )
+
+
 # vim: syntax=python ts=4 sw=4 sts=4 tw=79 sr et
 # Local Variables:
 # mode: python
