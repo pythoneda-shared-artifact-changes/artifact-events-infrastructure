@@ -82,8 +82,8 @@ class DbusArtifactChangesCommitted(BaseObject, ServiceInterface):
         return [
             event.change.to_json(),
             event.commit,
-            event.id,
             json.dumps(event.previous_event_ids),
+            event.id,
         ]
 
     @classmethod
@@ -106,13 +106,12 @@ class DbusArtifactChangesCommitted(BaseObject, ServiceInterface):
         :return: The ArtifactChangesCommitted event.
         :rtype: pythoneda.shared.artifact.artifact.events.ArtifactChangesCommitted
         """
-        change_json, commit, event_id, prev_event_ids = message.body
+        change_json, commit, prev_event_ids, event_id = message.body
         return ArtifactChangesCommitted(
             Change.from_json(change_json),
             commit,
-            None,
-            event_id,
             json.loads(prev_event_ids),
+            event_id,
         )
 
 

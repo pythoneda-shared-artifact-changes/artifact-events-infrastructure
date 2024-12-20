@@ -83,8 +83,8 @@ class DbusArtifactCommitPushed(BaseObject, ServiceInterface):
         return [
             event.change.to_json(),
             event.commit,
-            event.id,
             json.dumps(event.previous_event_ids),
+            event.id,
         ]
 
     @classmethod
@@ -96,7 +96,6 @@ class DbusArtifactCommitPushed(BaseObject, ServiceInterface):
         :return: The signature.
         :rtype: str
         """
-        print(f"received event: {event}")
         return "ssss"
 
     @classmethod
@@ -108,13 +107,12 @@ class DbusArtifactCommitPushed(BaseObject, ServiceInterface):
         :return: The ArtifactCommitPushed event.
         :rtype: pythoneda.shared.artifact.artifact.events.ArtifactCommitPushed
         """
-        change_json, commit, event_id, prev_event_ids = message.body
+        change_json, commit, prev_event_ids, event_id = message.body
         return ArtifactCommitPushed(
             Change.from_json(change_json),
             commit,
-            None,
-            event_id,
             json.loads(prev_event_ids),
+            event_id,
         )
 
 
