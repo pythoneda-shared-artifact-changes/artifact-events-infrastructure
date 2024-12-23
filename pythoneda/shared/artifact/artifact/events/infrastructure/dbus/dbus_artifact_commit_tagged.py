@@ -26,7 +26,7 @@ from pythoneda.shared import Event
 from pythoneda.shared.infrastructure.dbus import DbusEvent
 from pythoneda.shared.artifact.artifact.events import ArtifactCommitTagged
 from pythoneda.shared.artifact.artifact.events.infrastructure.dbus import DBUS_PATH
-from typing import List
+from typing import List, Type
 
 
 class DbusArtifactCommitTagged(DbusEvent):
@@ -47,7 +47,7 @@ class DbusArtifactCommitTagged(DbusEvent):
         Creates a new DbusArtifactCommitTagged.
         """
         super().__init__(
-            "Pythoneda_Shared_Artifact_Artifact_Events_ArtifactCommitTagged"
+            "Pythoneda_Shared_Artifact_Artifact_Events_ArtifactCommitTagged", DBUS_PATH
         )
 
     @signal()
@@ -58,15 +58,6 @@ class DbusArtifactCommitTagged(DbusEvent):
         :type commit: str
         """
         pass
-
-    @classmethod
-    def path(cls) -> str:
-        """
-        Retrieves the d-bus path.
-        :return: Such value.
-        :rtype: str
-        """
-        return DBUS_PATH
 
     @classmethod
     def transform(cls, event: ArtifactCommitTagged) -> List[str]:

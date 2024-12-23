@@ -48,7 +48,7 @@ class DbusArtifactCommitPushed(DbusEvent):
         Creates a new DbusArtifactCommitPushed.
         """
         super().__init__(
-            "Pythoneda_Shared_Artifact_Artifact_Events_ArtifactCommitPushed"
+            "Pythoneda_Shared_Artifact_Artifact_Events_ArtifactCommitPushed", DBUS_PATH
         )
 
     @signal()
@@ -61,15 +61,6 @@ class DbusArtifactCommitPushed(DbusEvent):
         :type commit: str
         """
         pass
-
-    @classmethod
-    def path(cls) -> str:
-        """
-        Retrieves the d-bus path.
-        :return: Such value.
-        :rtype: str
-        """
-        return DBUS_PATH
 
     @classmethod
     def transform(cls, event: ArtifactCommitPushed) -> List[str]:

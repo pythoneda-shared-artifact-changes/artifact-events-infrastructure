@@ -46,7 +46,9 @@ class DbusArtifactTagPushed(DbusEvent):
         """
         Creates a new DbusArtifactTagPushed.
         """
-        super().__init__("Pythoneda_Shared_Artifact_Artifact_Events_ArtifactTagPushed")
+        super().__init__(
+            "Pythoneda_Shared_Artifact_Artifact_Events_ArtifactTagPushed", DBUS_PATH
+        )
 
     @signal()
     def TagPushed(self, tag: "s", commit: "s", repositoryUrl: "s", branch: "s"):
@@ -62,15 +64,6 @@ class DbusArtifactTagPushed(DbusEvent):
         :type branch: str
         """
         pass
-
-    @classmethod
-    def path(cls) -> str:
-        """
-        Retrieves the d-bus path.
-        :return: Such value.
-        :rtype: str
-        """
-        return DBUS_PATH
 
     @classmethod
     def transform(cls, event: TagPushed) -> List[str]:
