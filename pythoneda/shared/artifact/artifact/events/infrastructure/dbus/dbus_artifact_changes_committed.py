@@ -22,7 +22,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from dbus_next import Message
 from dbus_next.service import signal
 import json
-from pythoneda.shared import Event
+from pythoneda.shared import Event, Invariants
 from pythoneda.shared.infrastructure.dbus import DbusEvent
 from pythoneda.shared.artifact.events import Change
 from pythoneda.shared.artifact.artifact.events import ArtifactChangesCommitted
@@ -48,9 +48,18 @@ class DbusArtifactChangesCommitted(DbusEvent):
         Creates a new DbusArtifactChangesCommitted.
         """
         super().__init__(
-            "Pythoneda_Shared_Artifact_Artifact_Events_ArtifactChangesCommitted",
             DBUS_PATH,
         )
+
+    @classmethod
+    @property
+    def name(cls) -> str:
+        """
+        Retrieves the d-bus interface name.
+        :return: Such value.
+        :rtype: str
+        """
+        return "Pythoneda_Shared_Artifact_Artifact_Events_ArtifactChangesCommitted"
 
     @signal()
     def ArtifactChangesCommitted(self, change: "s", commit: "s"):
@@ -76,6 +85,7 @@ class DbusArtifactChangesCommitted(DbusEvent):
             event.change.to_json(),
             event.commit,
             json.dumps(event.previous_event_ids),
+            Invariants.instance().to_json(event),
             event.id,
         ]
 
@@ -88,7 +98,7 @@ class DbusArtifactChangesCommitted(DbusEvent):
         :return: The signature.
         :rtype: str
         """
-        return "ssss"
+        return "sssss"
 
     @classmethod
     def parse(cls, message: Message) -> ArtifactChangesCommitted:
@@ -99,12 +109,15 @@ class DbusArtifactChangesCommitted(DbusEvent):
         :return: The ArtifactChangesCommitted event.
         :rtype: pythoneda.shared.artifact.artifact.events.ArtifactChangesCommitted
         """
-        change_json, commit, prev_event_ids, event_id = message.body
-        return ArtifactChangesCommitted(
-            Change.from_json(change_json),
-            commit,
-            json.loads(prev_event_ids),
-            event_id,
+        change_json, commit, prev_event_ids, invariants, event_id = message.body
+        return (
+            invariants,
+            ArtifactChangesCommitted(
+                Change.from_json(change_json),
+                commit,
+                json.loads(prev_event_ids),
+                event_id,
+            ),
         )
 
     @classmethod

@@ -22,7 +22,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from dbus_next import Message
 from dbus_next.service import signal
 import json
-from pythoneda.shared import Event
+from pythoneda.shared import Event, Invariants
 from pythoneda.shared.infrastructure.dbus import DbusEvent
 from pythoneda.shared.artifact.artifact.events import ArtifactCommitTagged
 from pythoneda.shared.artifact.artifact.events.infrastructure.dbus import DBUS_PATH
@@ -46,9 +46,17 @@ class DbusArtifactCommitTagged(DbusEvent):
         """
         Creates a new DbusArtifactCommitTagged.
         """
-        super().__init__(
-            "Pythoneda_Shared_Artifact_Artifact_Events_ArtifactCommitTagged", DBUS_PATH
-        )
+        super().__init__(DBUS_PATH)
+
+    @classmethod
+    @property
+    def name(cls) -> str:
+        """
+        Retrieves the d-bus interface name.
+        :return: Such value.
+        :rtype: str
+        """
+        return "Pythoneda_Shared_Artifact_Artifact_Events_ArtifactCommitTagged"
 
     @signal()
     def ArtifactCommitTagged(self, commit: "s"):
@@ -75,6 +83,7 @@ class DbusArtifactCommitTagged(DbusEvent):
             event.branch,
             event.repository_folder,
             json.dumps(event.previous_event_ids),
+            Invariants.instance().to_json(event),
             event.id,
         ]
 
@@ -87,7 +96,7 @@ class DbusArtifactCommitTagged(DbusEvent):
         :return: The signature.
         :rtype: str
         """
-        return "sssssss"
+        return "ssssssss"
 
     @classmethod
     def parse(cls, message: Message) -> ArtifactCommitTagged:
@@ -105,16 +114,20 @@ class DbusArtifactCommitTagged(DbusEvent):
             branch,
             folder,
             prev_event_ids,
+            invariants,
             event_id,
         ) = message.body
-        return ArtifactCommitTagged(
-            tag,
-            commit,
-            repository_url,
-            branch,
-            folder,
-            json.loads(prev_event_ids),
-            event_id,
+        return (
+            invariants,
+            ArtifactCommitTagged(
+                tag,
+                commit,
+                repository_url,
+                branch,
+                folder,
+                json.loads(prev_event_ids),
+                event_id,
+            ),
         )
 
     @classmethod

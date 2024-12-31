@@ -22,7 +22,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from dbus_next import Message
 from dbus_next.service import signal
 import json
-from pythoneda.shared import Event
+from pythoneda.shared import Event, Invariants
 from pythoneda.shared.infrastructure.dbus import DbusEvent
 from pythoneda.shared.artifact.artifact.events import ArtifactCommitPushed
 from pythoneda.shared.artifact.artifact.events.infrastructure.dbus import DBUS_PATH
@@ -47,9 +47,17 @@ class DbusArtifactCommitPushed(DbusEvent):
         """
         Creates a new DbusArtifactCommitPushed.
         """
-        super().__init__(
-            "Pythoneda_Shared_Artifact_Artifact_Events_ArtifactCommitPushed", DBUS_PATH
-        )
+        super().__init__(DBUS_PATH)
+
+    @classmethod
+    @property
+    def name(cls) -> str:
+        """
+        Retrieves the d-bus interface name.
+        :return: Such value.
+        :rtype: str
+        """
+        return "Pythoneda_Shared_Artifact_Artifact_Events_ArtifactCommitPushed"
 
     @signal()
     def ArtifactCommitPushed(self, change: "s", commit: "s"):
@@ -75,6 +83,7 @@ class DbusArtifactCommitPushed(DbusEvent):
             event.change.to_json(),
             event.commit,
             json.dumps(event.previous_event_ids),
+            Invariants.instance().to_json(event),
             event.id,
         ]
 
@@ -87,7 +96,7 @@ class DbusArtifactCommitPushed(DbusEvent):
         :return: The signature.
         :rtype: str
         """
-        return "ssss"
+        return "sssss"
 
     @classmethod
     def parse(cls, message: Message) -> ArtifactCommitPushed:
@@ -98,12 +107,15 @@ class DbusArtifactCommitPushed(DbusEvent):
         :return: The ArtifactCommitPushed event.
         :rtype: pythoneda.shared.artifact.artifact.events.ArtifactCommitPushed
         """
-        change_json, commit, prev_event_ids, event_id = message.body
-        return ArtifactCommitPushed(
-            Change.from_json(change_json),
-            commit,
-            json.loads(prev_event_ids),
-            event_id,
+        change_json, commit, prev_event_ids, invariants, event_id = message.body
+        return (
+            invariants,
+            ArtifactCommitPushed(
+                Change.from_json(change_json),
+                commit,
+                json.loads(prev_event_ids),
+                event_id,
+            ),
         )
 
     @classmethod

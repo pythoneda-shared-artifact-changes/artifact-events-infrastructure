@@ -22,7 +22,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from dbus_next import Message
 from dbus_next.service import signal
 import json
-from pythoneda.shared import Event
+from pythoneda.shared import Event, Invariants
 from pythoneda.shared.infrastructure.dbus import DbusEvent
 from pythoneda.shared.artifact.artifact.events import ArtifactTagPushed
 from pythoneda.shared.artifact.artifact.events.infrastructure.dbus import DBUS_PATH
@@ -46,9 +46,17 @@ class DbusArtifactTagPushed(DbusEvent):
         """
         Creates a new DbusArtifactTagPushed.
         """
-        super().__init__(
-            "Pythoneda_Shared_Artifact_Artifact_Events_ArtifactTagPushed", DBUS_PATH
-        )
+        super().__init__(DBUS_PATH)
+
+    @classmethod
+    @property
+    def name(cls) -> str:
+        """
+        Retrieves the d-bus interface name.
+        :return: Such value.
+        :rtype: str
+        """
+        return "Pythoneda_Shared_Artifact_Artifact_Events_ArtifactTagPushed"
 
     @signal()
     def TagPushed(self, tag: "s", commit: "s", repositoryUrl: "s", branch: "s"):
@@ -80,6 +88,7 @@ class DbusArtifactTagPushed(DbusEvent):
             event.repository_url,
             event.branch,
             json.dumps(event.previous_event_ids),
+            Invariants.instance().to_json(event),
             event.id,
         ]
 
@@ -92,7 +101,7 @@ class DbusArtifactTagPushed(DbusEvent):
         :return: The signature.
         :rtype: str
         """
-        return "ssssss"
+        return "sssssss"
 
     @classmethod
     def parse(cls, message: Message) -> ArtifactTagPushed:
@@ -103,14 +112,19 @@ class DbusArtifactTagPushed(DbusEvent):
         :return: The TagPushed event.
         :rtype: pythoneda.shared.artifact.artifact.events.ArtifactTagPushed
         """
-        tag, commit, repository_url, branch, prev_event_ids, event_id = message.body
-        return ArtifactTagPushed(
-            tag,
-            commit,
-            repository_url,
-            branch,
-            json.loads(prev_event_ids),
-            event_id,
+        tag, commit, repository_url, branch, prev_event_ids, invariants, event_id = (
+            message.body
+        )
+        return (
+            invariants,
+            ArtifactTagPushed(
+                tag,
+                commit,
+                repository_url,
+                branch,
+                json.loads(prev_event_ids),
+                event_id,
+            ),
         )
 
     @classmethod
